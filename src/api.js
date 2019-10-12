@@ -13,7 +13,6 @@ export default {
     updateMember:(body) => request('/member/update',body,'post'),
     depeteMemberById:(body) => request('/member/deleteById',body,'post'),
 
-
     searchSupplierList:(body) => request('/supplier/list/search',body,'post'),
     addSupplier:(body) => request('/supplier/add',body,'post'),
     getSupplierById:(body) => request('/supplier/getSupplierById',body,'post'),
