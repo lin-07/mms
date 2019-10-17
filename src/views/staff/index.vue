@@ -124,9 +124,9 @@ export default {
         },
         handleDele(id) {
             this.$confirm('确认删除这条记录吗？', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
             }).then(() => {
                 api.depeteEmpById({'id':id}).then(res => {
                     if(res.status === 0){
@@ -164,6 +164,10 @@ export default {
                             console.log(res)
                             this.fetchData()
                             this.dialogFormVisible = false
+                            this.$message({
+                                type:'warning',
+                                message:'新增成功，初始密码为123456'
+                            })
                         }else{
                             this.$message({
                                 message:res.message,
