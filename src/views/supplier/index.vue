@@ -4,18 +4,21 @@
             <el-form-item prop="name">
                 <el-input v-model="searchMap.name" placeholder="供应商名称" style="width: 200px" clearable></el-input>
             </el-form-item>
-            <el-form-item prop="linkman">
+            <el-form-item prop="linkman" v-if="!isDialog">
                 <el-input v-model="searchMap.linkman" placeholder="联系人" style="width: 200px" clearable></el-input>
             </el-form-item>
-            <el-form-item prop="mobile">
+            <el-form-item prop="mobile" v-if="!isDialog">
                 <el-input v-model="searchMap.mobile" placeholder="联系电话" style="width: 200px" clearable></el-input>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="fetchData">查询</el-button>
-                <el-button type="primary" @click="handleAdd">新增</el-button>
-                <el-button @click="resetForm('searchForm')">重置</el-button>
+                <el-button type="primary" @click="handleAdd" v-if="!isDialog">新增</el-button>
+                <el-button @click="resetForm('searchForm')" v-if="!isDialog">重置</el-button>
             </el-form-item>
         </el-form>
+        <!-- :highlight-current-row="true" 激活单选行
+        @current-change="choose" 当点击某一行会触发函数，并且这个函数会接收两个参数，currentRow,oldRow
+         -->
         <el-table :header-cell-style="{color:'#333'}" @current-change="choose" :highlight-current-row="true" :data="list" height="380" border style="width: 100%" size="mini">
             <el-table-column label="选择" width="50">
                 <template slot-scope="scope">
@@ -24,9 +27,9 @@
             </el-table-column>
             <el-table-column prop="name" label="供应商名称"></el-table-column>
             <el-table-column prop="linkman" label="联系人"></el-table-column>
-            <el-table-column prop="mobile" label="联系电话" ></el-table-column>
-            <el-table-column prop="remark" label="备注"></el-table-column>
-            <el-table-column label="操作" width="150">
+            <el-table-column prop="mobile" label="联系电话" v-if="!isDialog"></el-table-column>
+            <el-table-column prop="remark" label="备注" v-if="!isDialog"></el-table-column>
+            <el-table-column label="操作" width="150" v-if="!isDialog">
                 <template slot-scope="scope">
                 <el-button size="mini" @click="handleEdit(scope.row.id)">编辑</el-button>
                 <el-button size="mini" type="danger" @click="handleDele(scope.row.id)">删除</el-button>
@@ -39,10 +42,10 @@
             :current-page="currentPage"
             :page-sizes="[10, 20, 30, 50]"
             :page-size="pageSize"
-            layout="total, sizes, prev, pager, next, jumper"
+            :layout="!isDialog ? 'total, sizes, prev, pager, next, jumper' : 'prev, pager, next'"
             :total="total">
         </el-pagination>
-        <el-dialog title="供应商编辑" :visible.sync="dialogFormVisible" width="400px">
+        <el-dialog title="供应商编辑" :visible.sync="dialogFormVisible" width="400px"  v-if="!isDialog">
             <el-form ref="pojoForm" :rules="rules" :model="pojo" label-width="100px" label-position="right" size="mini">
                 <el-form-item label="供应商名称" prop="name"> 
                     <el-input v-model="pojo.name" clearable  style="width: 220px;"/> 
@@ -68,6 +71,9 @@
 <script>
 import api from "@/api";
 export default {
+    props:{
+        isDialog:Boolean
+    },
     data(){
         return {
             list:[],
@@ -121,6 +127,7 @@ export default {
                 return;
             }
             this.current = item.id;
+            this.$emit('option-choose',item)
         },
         handleSizeChange(pageSize){
             this.pageSize = pageSize
@@ -146,25 +153,25 @@ export default {
             this.dialogFormVisible = false
         },
         addData(formName){
-        this.$refs[formName].validate(valid => {
-                if(valid){
-                    //提交数据
-                    api.addSupplier(this.pojo).then(res => {
-                        if(res.status === 0){
-                            console.log(res)
-                            this.fetchData()
-                            this.dialogFormVisible = false
-                        }else{
-                            this.$message({
-                                message:res.message,
-                                type:'warning'
-                            })
-                        }
-                    })
-                }else{
-                    return false
-                }
-            })
+            this.$refs[formName].validate(valid => {
+                    if(valid){
+                        //提交数据
+                        api.addSupplier(this.pojo).then(res => {
+                            if(res.status === 0){
+                                console.log(res)
+                                this.fetchData()
+                                this.dialogFormVisible = false
+                            }else{
+                                this.$message({
+                                    message:res.message,
+                                    type:'warning'
+                                })
+                            }
+                        })
+                    }else{
+                        return false
+                    }
+                })
         },
         handleEdit(id) {
             this.handleAdd()

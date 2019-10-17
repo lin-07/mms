@@ -17,5 +17,18 @@ export default {
     addSupplier:(body) => request('/supplier/add',body,'post'),
     getSupplierById:(body) => request('/supplier/getSupplierById',body,'post'),
     updateSupplier:(body) => request('/supplier/update',body,'post'),
-    depeteSupplierById:(body) => request('/supplier/deleteById',body,'post')
+    depeteSupplierById:(body) => request('/supplier/deleteById',body,'post'),
+
+
+    searchGoodsList:(body) => request('/goods/list/search',body,'post'),
+    addGoods:(body) => request('/goods/add',body,'post'),
+    updateGoods:(body) => request('/goods/update',body,'post'),
+    getGoodsById:(body) => request('/goods/getGoodsById',body,'post'),
+    depeteGoodsById:(body) => request('/goods/deleteById',body,'post'),
+
+    searchEmpList:(body) => request('/emp/list/search',body,'post'),
+    addEmp:(body) => request('/emp/add',body,'post'),
+    updateEmp:(body) => request('/emp/update',body,'post'),
+    getEmpById:(body) => request('/emp/getEmpById',body,'post'),
+    depeteEmpById:(body) => request('/emp/deleteById',body,'post')
 }
