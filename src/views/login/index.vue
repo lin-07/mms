@@ -45,29 +45,40 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          api.userLogin(this.form).then(re => {
-            if (re.status === "0") {
-              //验证成功,通过token获取用户信息
-              api.getUserInfo(re.data).then(res => {
-                if (res.status === "0") {
-                  localStorage.setItem("mxg-user", JSON.stringify(res.data));
-                  localStorage.setItem("mxg-token", re.data.token);
-                  // 前往首页
-                  this.$router.push("/");
-                } else {
-                  this.$message({
-                    message: res.message,
-                    type: "warning"
-                  });
-                }
-              });
-            } else {
+          this.$store.dispatch('Login',this.form).then(res => {
+            if(res.status === '0'){
+                // 前往首页
+                this.$router.push("/");
+            }else{
               this.$message({
-                message: re.message,
+                message: res.message,
                 type: "warning"
               });
             }
-          });
+          })
+          // api.userLogin(this.form).then(re => {
+          //   if (re.status === "0") {
+          //     //验证成功,通过token获取用户信息
+          //     api.getUserInfo(re.data).then(res => {
+          //       if (res.status === "0") {
+          //         localStorage.setItem("mxg-user", JSON.stringify(res.data));
+          //         localStorage.setItem("mxg-token", re.data.token);
+          //         // 前往首页
+          //         this.$router.push("/");
+          //       } else {
+          //         this.$message({
+          //           message: res.message,
+          //           type: "warning"
+          //         });
+          //       }
+          //     });
+          //   } else {
+          //     this.$message({
+          //       message: re.message,
+          //       type: "warning"
+          //     });
+          //   }
+          // });
         } else {
           console.log("error submit!!");
           return false;

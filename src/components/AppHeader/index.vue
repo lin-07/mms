@@ -60,7 +60,7 @@ export default {
         }
     }
     return {
-      user:JSON.parse(localStorage.getItem('mxg-user')),
+      user:this.$store.state.user.user,
       dialogFormVisible:false,
       ruleForm:{
         oldPass:'',
@@ -133,12 +133,15 @@ export default {
         })
     },
     handleLogout(){
-      const token = localStorage.getItem("mxg-token");
-          api.logout({ token: token }).then(res => {
-            localStorage.removeItem("mxg-token");
-            localStorage.removeItem("mxg-user");
-            this.$router.push("/login");
-          });
+      // const token = localStorage.getItem("mxg-token");
+          // api.logout({ token: token }).then(res => {
+          //   localStorage.removeItem("mxg-token");
+          //   localStorage.removeItem("mxg-user");
+          //   this.$router.push("/login");
+          // });
+          this.$store.dispatch('Logout').then(res => {
+              this.$router.push("/login");
+          })
     }
   }
 }
