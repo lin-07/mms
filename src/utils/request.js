@@ -1,14 +1,61 @@
 import axios from 'axios';
-import qs from 'qs'
+import qs from 'qs';
+import { Loading,Message } from 'element-ui';
+// 全局加载器
+const loading = {
+  loadingInstance:null,
+  open: function(){
+    if(this.loadingInstance === null){
+      this.loadingInstance = Loading.service({
+        target:'.main',
+        text:'拼命加载中',
+        background:'rgba(0,0,0,0.5)'
+      })
+    }
+  },
+  close: function() {
+    if(this.loadingInstance !== null){
+      this.loadingInstance.close()
+    }
+    this.loadingInstance = null
+  }
+}
 
-// const service = axios.create({
-//     baseURL:process.env.VUE_APP_BASE_API,
-//     timeout:5000
-// })
+
+const service = axios.create({
+    baseURL:process.env.VUE_APP_BASE_API,
+    timeout:5000
+})
+
+// 请求拦截器
+service.interceptors.request.use(config => {
+  loading.open()
+  return config
+},error => {
+  loading.close()
+  return Promise.reject(error);
+})
+// 响应拦截器
+service.interceptors.response.use(response => {
+  loading.close()
+  // console.log('response',response)
+  if(response.status !== 200){
+    Message({
+      message:error.message,
+      type:'error',
+      duration: 5 * 1000
+    })
+  }
+  
+  return response
+},error => {
+  loading.close()
+  return Promise.reject(error);
+})
 
 const request = (url, body, type = 'get', isJson = false) => {
   const query = {
-    url: `${process.env.VUE_APP_BASE_API}${url}`,
+    url: url,
     method: type,
     withCredentials: true,
     timeout: 5000
@@ -24,7 +71,7 @@ const request = (url, body, type = 'get', isJson = false) => {
     query.data = isJson ? body : qs.stringify(body)
   }
   console.log(query)
-  return axios.request(query).then(res => {
+  return service.request(query).then(res => {
     if (!res.data) {
       reject(new Error('服务器响应超时'))
       return
@@ -33,13 +80,4 @@ const request = (url, body, type = 'get', isJson = false) => {
   }, e => { })
 }
 
-export default request //{
-    // getEmpList(){
-    //     const req = request({
-    //         url:'/emp/list',
-    //         method:"get"
-    //     })
-    //     return req;
-    // }
-    // getEmpList: (query) => request('/emp/list',query,'post')
-//}
+export default request

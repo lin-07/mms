@@ -30,5 +30,8 @@ export default {
     addEmp:(body) => request('/emp/add',body,'post'),
     updateEmp:(body) => request('/emp/update',body,'post'),
     getEmpById:(body) => request('/emp/getEmpById',body,'post'),
-    depeteEmpById:(body) => request('/emp/deleteById',body,'post')
+    depeteEmpById:(body) => request('/emp/deleteById',body,'post'),
+
+    checkPass:(body) => request('/user/checkPass',body,'post'),
+    modifyPass:(body) => request('/user/modifyPass',body,'post')
 }
