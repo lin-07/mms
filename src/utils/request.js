@@ -71,13 +71,27 @@ const request = (url, body, type = 'get', isJson = false) => {
     query.data = isJson ? body : qs.stringify(body)
   }
   console.log(query)
-  return service.request(query).then(res => {
-    if (!res.data) {
-      reject(new Error('服务器响应超时'))
-      return
-    }
-    return res.data
-  }, e => { })
+  return service.request(query).then(response => {
+  
+    console.log('response-----',response)
+    // promise处理响应
+    return new Promise((resolve,reject) => {
+      if (!response.data) {
+        reject(new Error('服务器响应超时'))
+        return
+      }
+      if (response.status === 200) {
+        resolve(response.data)
+      } else {
+        if (response.data.msg) {
+          response.data.message = response.data.msg
+          reject(response.data)
+        }
+      }
+    })
+  }, e => { 
+    console.log(e)
+  })
 }
 
 export default request
